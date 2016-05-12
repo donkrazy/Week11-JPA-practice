@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.1.xsd
+        http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
+        http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+        
+	<tx:annotation-driven />
+	<context:annotation-config />
+
+	<context:component-scan base-package="com.estsoft.guestbook">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Component" />
+	</context:component-scan>
+
+	<!-- 트랜잭션 관리자를 등록 -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 암호화된 Datasource -->
+	<bean id="dataSource" class="com.estsoft.utils.DecryptDataSource">
+		<property name="driverClassName">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+		<property name="url">
+			<value>4vri7rDHutLOUZIZHXQDMsCdKmpOSKolefXsSQx/q0GO1EdOZMS0ZrkmEa5F+YzXiUI3JLEk11v0JwNKiZ28epjvHTRwm3MIlolXNvvEWlyRRhvfyziEoR5BIYNuEu37QGbu3LjlW1HjQBIa8qYYXQ==</value>
+		</property>
+		<property name="username">
+			<value>BU1bkVlz4thzX8okJARQI3m7P7o64y5O</value>
+		</property>
+		<property name="password">
+			<value>+p28X1gix73L7Ma8tfI/64OtFJLJzovx</value>
+		</property>
+	</bean>
+
+	<!-- JPA 예외를 스프링 예외로 변환 -->
+	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+	<!-- JPA 설정 ( 엔티티 매니저 팩토리 등록 ) -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+
+		<!-- @Entity 탐색 시작 위치 -->
+		<property name="packagesToScan" value="com.estsoft.guestbook.domain" />
+
+		<!-- 하이버네이트 구현체 사용 -->
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+
+		<!-- 하이버네이트 상세 설정 -->
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop> <!-- 방언 -->
+				<prop key="hibernate.show_sql">true</prop>                   		<!-- SQL 보기 -->
+				<prop key="hibernate.format_sql">true</prop>                 		<!-- SQL 정렬해서 보기 -->
+				<prop key="hibernate.use_sql_comments">true</prop>                                        <!-- SQL 코멘트 보기 -->
+				<prop key="hibernate.id.new_generator_mappings">true</prop>                           <!-- 새 버전의 ID 생성 옵션 (반드시 해줘야함) -->
+				<prop key="hibernate.hbm2ddl.auto">create</prop>                                           <!-- DDL 자동 생성 -->
+			</props>
+		</property>
+	</bean>
+</beans> 
